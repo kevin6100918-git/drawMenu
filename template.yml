@@ -1,0 +1,105 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  samRandomMenu
+
+  Sample SAM Template for samRandomMenu
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Runtime: python3.11
+    Architectures:
+      - x86_64
+    Timeout: 5
+    MemorySize: 128
+
+Parameters:
+  stage:
+    Type: String
+  channelId:
+    Type: Number
+  channelSecret:
+    Type: String
+  channelAccessToken:
+    Type: String
+  endPoint:
+    Type: String
+
+Resources:
+  drawMenuApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref stage
+
+  # functionLayer:
+  #   Type: AWS::Serverless::LayerVersion
+  #   Properties:
+  #     ContentUri: layer/
+  #     CompatibleRuntimes:
+  #       - python3.10
+  #   Metadata:
+  #     BuildMethod: python3.10
+
+  drawFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: drawMenu/
+      Handler: app.lambda_handler
+      Layers:
+        # - !Ref functionLayer
+        - arn:aws:lambda:ap-northeast-1:529208540756:layer:functionLayer:6
+      Environment:
+        Variables:
+          channel_id: !Ref channelId
+          channel_secret: !Ref channelSecret
+          channel_access_token: !Ref channelAccessToken
+          end_point: !Ref endPoint
+      Events:
+        apiPOSTEvent:
+          Type: Api
+          Properties:
+            Path: /draw
+            Method: post
+            RestApiId: !Ref drawMenuApi
+        apiGETEvent:
+          Type: Api
+          Properties:
+            Path: /draw
+            Method: get
+            RestApiId: !Ref drawMenuApi
+        # apiPUTEvent:
+        #   Type: Api
+        #   Properties:
+        #     Path: /draw
+        #     Method: put
+        #     RestApiId: !Ref drawMenuApi
+        # apiDELEvent:
+        #   Type: Api
+        #   Properties:
+        #     Path: /draw
+        #     Method: delete
+        #     RestApiId: !Ref drawMenuApi
+        viewMenus:
+          Type: Api
+          Properties:
+            Path: /draw/menu
+            Method: get
+            RestApiId: !Ref drawMenuApi
+        # deleteMenus:
+        #   Type: Api
+        #   Properties:
+        #     Path: /draw/menu/delete
+        #     Method: get
+        #     RestApiId: !Ref drawMenuApi
+
+# Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  # drawMenuApi:
+  #   Description: API Gateway endpoint URL for dev stage for lambda function
+  #   Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev/"
+  # drawFunction:
+  #   Description: Lambda Function ARN
+  #   Value: !GetAtt drawFunction.Arn

@@ -1,0 +1,75 @@
+# More information about the configuration file can be found here:
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-config.html
+version = 0.1
+
+[default]
+[default.global.parameters]
+stack_name = "samDrawMenuDev"
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.validate.parameters]
+lint = true
+
+[default.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = false
+resolve_s3 = true
+parameter_overrides = [
+    "stage=dev",
+    "channelId=2001607812",
+    "channelSecret=dcccc654676274e05a967b08b75870ac",
+    "channelAccessToken=6wupm7vUSHfQnV0NGNshaKAGh/0kMbrKzdw2LXjpkttzpcw5nIJZuEdKe5/g9sOwAzCjczr5TNUiBXWUHZFMsTs4UVwYRuJi3LwzG93Wp2SJ6GB8IDMVSpq18gnbNAsx1eZ24Z59hPFhOfbVNuapQwdB04t89/1O/w1cDnyilFU=",
+    "endPoint=https://wzuv01mr75.execute-api.ap-northeast-1.amazonaws.com/dev/draw",
+]
+
+[default.package.parameters]
+resolve_s3 = true
+
+[default.sync.parameters]
+watch = true
+
+[default.local_start_api.parameters]
+warm_containers = "EAGER"
+
+[default.local_start_lambda.parameters]
+warm_containers = "EAGER"
+
+
+
+[prod]
+[prod.global.parameters]
+stack_name = "samDrawMenuProd"
+
+[prod.build.parameters]
+cached = true
+parallel = true
+
+[prod.validate.parameters]
+lint = true
+
+[prod.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = false
+resolve_s3 = true
+parameter_overrides = [
+    "stage=prod",
+    "channelId=2001607812",
+    "channelSecret=dcccc654676274e05a967b08b75870ac",
+    "channelAccessToken=6wupm7vUSHfQnV0NGNshaKAGh/0kMbrKzdw2LXjpkttzpcw5nIJZuEdKe5/g9sOwAzCjczr5TNUiBXWUHZFMsTs4UVwYRuJi3LwzG93Wp2SJ6GB8IDMVSpq18gnbNAsx1eZ24Z59hPFhOfbVNuapQwdB04t89/1O/w1cDnyilFU=",
+    "endPoint=https://fs92twv5dh.execute-api.ap-northeast-1.amazonaws.com/prod/draw",
+]
+
+[prod.package.parameters]
+resolve_s3 = true
+
+[prod.sync.parameters]
+watch = true
+
+[prod.local_start_api.parameters]
+warm_containers = "EAGER"
+
+[prod.local_start_lambda.parameters]
+warm_containers = "EAGER"

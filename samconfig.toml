@@ -4,7 +4,7 @@ version = 0.1
 
 [default]
 [default.global.parameters]
-stack_name = "samDrawMenuDev"
+stack_name = "draw-menu"
 
 [default.build.parameters]
 cached = true
@@ -18,11 +18,13 @@ capabilities = "CAPABILITY_IAM"
 confirm_changeset = false
 resolve_s3 = true
 parameter_overrides = [
-    "stage=dev",
-    "channelId=2001607812",
-    "channelSecret=dcccc654676274e05a967b08b75870ac",
-    "channelAccessToken=6wupm7vUSHfQnV0NGNshaKAGh/0kMbrKzdw2LXjpkttzpcw5nIJZuEdKe5/g9sOwAzCjczr5TNUiBXWUHZFMsTs4UVwYRuJi3LwzG93Wp2SJ6GB8IDMVSpq18gnbNAsx1eZ24Z59hPFhOfbVNuapQwdB04t89/1O/w1cDnyilFU=",
-    "endPoint=https://wzuv01mr75.execute-api.ap-northeast-1.amazonaws.com/dev/draw",
+    "stage=home",
+    "githubUser=kevin6100918-git",
+    "githubAccessToken=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",
+    "githubRepoName=drawMenu",
+    "lineBotChannelAccessToken=SIxYzwqbUtMwICkUzoGagLwEtCXjKHmWkg9dcG4rJBkKIS6A4RSQpdPVISLnVd5skPCDhu1AC3Na+aqD+IvuREGVWA2TTgD5UdzLi5pQ+PlAky00fc03J3jFkjTVpDnqQCr1ibPtR/8Nl4VtPeXzlwdB04t89/1O/w1cDnyilFU=",
+    "lineBotChannelSecret=bb01a622bd926a3339c8883b994763cf",
+    "lineBotChannelID=2000268212",
 ]
 
 [default.package.parameters]
@@ -35,41 +37,4 @@ watch = true
 warm_containers = "EAGER"
 
 [default.local_start_lambda.parameters]
-warm_containers = "EAGER"
-
-
-
-[prod]
-[prod.global.parameters]
-stack_name = "samDrawMenuProd"
-
-[prod.build.parameters]
-cached = true
-parallel = true
-
-[prod.validate.parameters]
-lint = true
-
-[prod.deploy.parameters]
-capabilities = "CAPABILITY_IAM"
-confirm_changeset = false
-resolve_s3 = true
-parameter_overrides = [
-    "stage=prod",
-    "channelId=2001607812",
-    "channelSecret=dcccc654676274e05a967b08b75870ac",
-    "channelAccessToken=6wupm7vUSHfQnV0NGNshaKAGh/0kMbrKzdw2LXjpkttzpcw5nIJZuEdKe5/g9sOwAzCjczr5TNUiBXWUHZFMsTs4UVwYRuJi3LwzG93Wp2SJ6GB8IDMVSpq18gnbNAsx1eZ24Z59hPFhOfbVNuapQwdB04t89/1O/w1cDnyilFU=",
-    "endPoint=https://fs92twv5dh.execute-api.ap-northeast-1.amazonaws.com/prod/draw",
-]
-
-[prod.package.parameters]
-resolve_s3 = true
-
-[prod.sync.parameters]
-watch = true
-
-[prod.local_start_api.parameters]
-warm_containers = "EAGER"
-
-[prod.local_start_lambda.parameters]
 warm_containers = "EAGER"

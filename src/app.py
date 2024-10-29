@@ -47,17 +47,12 @@ HEADER = {
 
 
 stage = getenv("STAGE")
-def selectMenuPath(pathPara = None, timenow = None):
+def selectMenuPath(pathPara = None):
     if stage == "home":
-        if pathPara == "dinner" and timenow == None:
+        if pathPara == "dinner":
             path = "drawMenu/menus/homemeal"
-        elif pathPara == "breakfast" and timenow == None:
+        elif pathPara == "breakfast":
             path = "drawMenu/menus/homemorning"
-        elif pathPara == None and isinstance(timenow, int):
-            if timenow >= 11 and timenow < 22:
-                path = "drawMenu/menus/homemeal"
-            elif timenow < 11 or timenow >= 22:
-                path = "drawMenu/menus/homemorning"
 
     # elif stage == "prod":
     #     path = "drawMenu/menus/yude"
@@ -103,7 +98,12 @@ def lambda_handler(event:dict, context:dict):
                 if events[0]["message"]["type"] == "text":
                     text = events[0]["message"]["text"]
                     if "吃甚麼" in text or "吃什麼" in text:
-                        payload["messages"] = genMessage()
+                        if "早" in text:
+                            payload["messages"] = genMessage(category="breakfast")
+                        elif "晚" in text:
+                            payload["messages"] = genMessage(category="dinner")
+                        else:
+                            payload["messages"] = genMessage()
                         sendMessage(payload=payload)
                     # elif text == "菜單":
                     #     payload["messages"] = [managedMenu()]
@@ -157,11 +157,16 @@ def lambda_handler(event:dict, context:dict):
         return response("application/json", 200, json.dumps({"message": "刪除成功"}))
     g.close()
 
-def getImage():
+def getImage(category=None):
     # get time now
     timenow = int(datetime.now().hour)+8
     # select meal
-    menuPath = selectMenuPath(timenow=timenow)
+    if not category:
+        if timenow < 11 or timenow >= 22:
+            category = "breakfast"
+        else:
+            category = "dinner"
+    menuPath = selectMenuPath(category)
     menus = repo.get_contents(path=menuPath)
     menuPathList = [menu.path for menu in menus]
     result = randomImage(menuPathList).get()
@@ -182,8 +187,8 @@ def getTextMessage(restaurantName):
     }
     return message
 
-def genMessage():
-    imageUrl = getImage()
+def genMessage(category=None):
+    imageUrl = getImage(category)
     restaurantName = imageUrl.split("/")[-1].split(".")[0]
     originalContentUrl = imageUrl.replace(restaurantName, quote(restaurantName, encoding="utf-8"))
     messages = [getTextMessage(restaurantName), getImageMessage(originalContentUrl)]

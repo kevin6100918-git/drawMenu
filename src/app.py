@@ -7,7 +7,7 @@ import base64
 from github import GithubException
 from github import Github
 from datetime import datetime
-from urllib.parse import quote_plus, unquote_plus
+from urllib.parse import quote
 
 import htmlResponseModel
 
@@ -185,8 +185,8 @@ def getTextMessage(restaurantName):
 def genMessage():
     imageUrl = getImage()
     restaurantName = imageUrl.split("/")[-1].split(".")[0]
-    originalContentUrl = imageUrl.replace(restaurantName, quote_plus(restaurantName))
-    messages = [getTextMessage(unquote_plus(restaurantName)), getImageMessage(originalContentUrl)]
+    originalContentUrl = imageUrl.replace(restaurantName, quote(restaurantName, encoding="utf-8"))
+    messages = [getTextMessage(restaurantName), getImageMessage(originalContentUrl)]
     return messages
 
 # def managedMenu():

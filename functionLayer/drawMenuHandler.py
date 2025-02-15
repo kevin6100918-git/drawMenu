@@ -6,6 +6,8 @@ from linebot import LineBotApi, WebhookHandler
 from os import getenv
 import random
 
+import getImageHandler
+
 
 # Linebot Setting
 line_bot_api = LineBotApi(getenv('LINE_BOT_CHANNEL_ACCESS_TOKEN'))
@@ -17,7 +19,7 @@ HEADER = {
 }
 
 class randomImage:
-    def __init__(self, imgList: list[str]):
+    def __init__(self, imgList: list[tuple[str, str]]):
         self.imageList = imgList
         self.randomShuffle()
     
@@ -36,7 +38,8 @@ def random_get_menu_file(category: str=""):
             category = "breakfast"
         else:
             category = "dinner"
-    menuRandomPool = os.listdir(os.path.join("drawMenu", "menus", category))
+    # menuRandomPool = os.listdir(os.path.join("drawMenu", "menus", category))
+    menuRandomPool = getImageHandler.get_menu_list(category)
 
     return category, randomImage(menuRandomPool).get()
 
@@ -53,11 +56,12 @@ def draw_menu(event:dict):
             else:
                 category, menuFile =  random_get_menu_file()
             
-            restaurantName = os.path.basename(menuFile).split(".")[0]
+            # restaurantName = os.path.basename(menuFile).split(".")[0]
+            restaurantName = menuFile[0].split(".")[0]
 
             return {
                 "category": category,
-                "menuFile": menuFile,
+                "menuFile": menuFile[1],
                 "restaurantName": restaurantName
             }
 

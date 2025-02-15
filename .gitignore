@@ -249,3 +249,4 @@ $RECYCLE.BIN/
 # skip menu image change detact
 drawMenu/
 samconfig.toml
+.vscode/settings.json

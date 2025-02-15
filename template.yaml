@@ -6,6 +6,9 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
+    Runtime: python3.11
+    Architectures:
+      - x86_64
     Timeout: 30
     MemorySize: 128
 
@@ -45,16 +48,11 @@ Resources:
     Metadata:
       BuildMethod: python3.11
 
-  DrawMenuFunction:
+  GetWebPageFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: src/
-      Handler: app.lambda_handler
-      Runtime: python3.11
-      Architectures:
-        - x86_64
-      Timeout: 30
-      MemorySize: 128
+      CodeUri: src/getWebPage/
+      Handler: api.lambda_handler
       Layers:
         - !Ref FunctionLayer
       Environment:
@@ -72,26 +70,8 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             RestApiId: !Ref DrawMenuApi
-            Path: /draw
-            Method: post
-        ViewMenus:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            RestApiId: !Ref DrawMenuApi
-            Path: /menu
+            Path: /
             Method: get
-        UploadMenu:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            RestApiId: !Ref DrawMenuApi
-            Path: /upload
-            Method: post
-        DeleteMenu:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            RestApiId: !Ref DrawMenuApi
-            Path: /delete
-            Method: delete
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

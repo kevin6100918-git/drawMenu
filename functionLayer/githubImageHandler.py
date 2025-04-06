@@ -26,7 +26,7 @@ GITHUB_REPO_NAME = os.getenv("GITHUB_REPO_NAME")
 gitHubRepo = gitHubUser.get_repo(name=GITHUB_REPO_NAME)
 
 def gen_image_url(meal: str, menu: str) -> str:
-    return f"https://github.com/{GITHUB_USER}/{GITHUB_REPO_NAME}/blob/main/{GITHUB_REPO_NAME}/menus/{meal}/{quote(menu, encoding='utf-8')}?raw=true"
+    return f"https://raw.githubusercontent.com/{GITHUB_USER}/{GITHUB_REPO_NAME}/main/drawMenu/menus/{meal}/{quote(menu, encoding='utf-8')}"
 
 def get_menu_list(meal: str) -> list[tuple[str, str]]:
     try:

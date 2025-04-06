@@ -1,0 +1,151 @@
+openapi: 3.0.0
+
+info:
+  title: Draw Menu API
+  description: Draw Menu API.
+  version: 1.0.0
+
+paths:
+  /:
+    get:
+      summary: menu
+      tags:
+        - menu
+      operationId: menu
+      responses:
+        "200": 
+          description: Render page.
+          content:
+            text/html:
+              schema:
+                type: string
+
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: post
+        uri:
+          Fn::Sub:
+            - 'arn:aws:apigateway:${AWSRegion}:lambda:path/2015-03-31/functions/${FunctionArn}/invocations'
+            - AWSRegion:
+                Ref: AWS::Region
+              FunctionArn:
+                Fn::GetAtt: [GetWebPageFunction, Arn]
+
+      x-amazon-apigateway-cors: {
+        allowOrigins: [
+          '*' 
+        ],
+        allowCredentials: true,
+        allowMethods: [
+          "OPTIONS",
+          "GET"
+        ],
+      }
+
+  /draw:
+    post:
+      summary: draw
+      tags:
+        - draw
+      operationId: draw
+      responses:
+        "200": 
+          description: Render page.
+          content:
+            application/json:
+              schema:
+                type: object
+
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: post
+        uri:
+          Fn::Sub:
+            - 'arn:aws:apigateway:${AWSRegion}:lambda:path/2015-03-31/functions/${FunctionArn}/invocations'
+            - AWSRegion:
+                Ref: AWS::Region
+              FunctionArn:
+                Fn::GetAtt: [DrawMenuFunction, Arn]
+
+      x-amazon-apigateway-cors: {
+        allowOrigins: [
+          '*' 
+        ],
+        allowCredentials: true,
+        allowMethods: [
+          "OPTIONS",
+          "POST"
+        ],
+      }
+
+  /upload:
+    post:
+      summary: upload
+      tags:
+        - upload
+      operationId: upload
+      responses:
+        "200": 
+          description: Render page.
+          content:
+            application/json:
+              schema:
+                type: object
+
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: post
+        uri:
+          Fn::Sub:
+            - 'arn:aws:apigateway:${AWSRegion}:lambda:path/2015-03-31/functions/${FunctionArn}/invocations'
+            - AWSRegion:
+                Ref: AWS::Region
+              FunctionArn:
+                Fn::GetAtt: [UploadMenuFunction, Arn]
+
+      x-amazon-apigateway-cors: {
+        allowOrigins: [
+          '*' 
+        ],
+        allowCredentials: true,
+        allowMethods: [
+          "OPTIONS",
+          "POST"
+        ],
+      }
+
+  /delete:
+    delete:
+      summary: delete
+      tags:
+        - delete
+      operationId: delete
+      responses:
+        "200": 
+          description: Render page.
+          content:
+            application/json:
+              schema:
+                type: object
+
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: post
+        uri:
+          Fn::Sub:
+            - 'arn:aws:apigateway:${AWSRegion}:lambda:path/2015-03-31/functions/${FunctionArn}/invocations'
+            - AWSRegion:
+                Ref: AWS::Region
+              FunctionArn:
+                Fn::GetAtt: [DeleteMenuFunction, Arn]
+
+      x-amazon-apigateway-cors: {
+        allowOrigins: [
+          '*' 
+        ],
+        allowCredentials: true,
+        allowMethods: [
+          "OPTIONS",
+          "DELETE"
+        ],
+      }

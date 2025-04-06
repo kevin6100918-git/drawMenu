@@ -1,0 +1,157 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  draw-menu
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Runtime: python3.11
+    Architectures:
+      - x86_64
+    Timeout: 30
+    MemorySize: 128
+
+Parameters:
+  stage:
+    Type: String
+  githubUser:
+    Type: String
+  githubAccessToken:
+    Type: String
+  githubRepoName:
+    Type: String
+  lineBotChannelAccessToken:
+    Type: String
+  lineBotChannelSecret:
+    Type: String
+  lineBotChannelID:
+    Type: String
+
+Resources:
+  DrawMenuApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref stage
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: openApi.yml
+
+  FunctionLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: functionLayer/
+      CompatibleRuntimes:
+        - python3.11
+    Metadata:
+      BuildMethod: python3.11
+
+  GetWebPageFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: src/getWebPage/
+      Handler: api.lambda_handler
+      Layers:
+        - !Ref FunctionLayer
+      Environment:
+        Variables:
+          STAGE: !Ref stage
+          GITHUB_USER: !Ref githubUser
+          GITHUB_ACCESS_TOKEN: !Ref githubAccessToken
+          GITHUB_REPO_NAME: !Ref githubRepoName
+          LINE_BOT_CHANNEL_ACCESS_TOKEN: !Ref lineBotChannelAccessToken
+          LINE_BOT_CHANNEL_SECRET: !Ref lineBotChannelSecret
+          LINE_BOT_CHANNEL_ID: !Ref lineBotChannelID
+          # API: !Sub "https://${DrawMenuApi}.execute-api.${AWS::Region}.amazonaws.com/${stage}"
+      Events:
+        ReceivedLineMessage:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: !Ref DrawMenuApi
+            Path: /
+            Method: get
+
+  DrawMenuFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: src/drawMenu/
+      Handler: api.lambda_handler
+      Layers:
+        - !Ref FunctionLayer
+      Environment:
+        Variables:
+          STAGE: !Ref stage
+          GITHUB_USER: !Ref githubUser
+          GITHUB_ACCESS_TOKEN: !Ref githubAccessToken
+          GITHUB_REPO_NAME: !Ref githubRepoName
+          LINE_BOT_CHANNEL_ACCESS_TOKEN: !Ref lineBotChannelAccessToken
+          LINE_BOT_CHANNEL_SECRET: !Ref lineBotChannelSecret
+          LINE_BOT_CHANNEL_ID: !Ref lineBotChannelID
+          # API: !Sub "https://${DrawMenuApi}.execute-api.${AWS::Region}.amazonaws.com/${stage}"
+      Events:
+        ReceivedLineMessage:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: !Ref DrawMenuApi
+            Path: /draw
+            Method: post
+
+  UploadMenuFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: src/uploadMenu/
+      Handler: api.lambda_handler
+      Layers:
+        - !Ref FunctionLayer
+      Environment:
+        Variables:
+          STAGE: !Ref stage
+          GITHUB_USER: !Ref githubUser
+          GITHUB_ACCESS_TOKEN: !Ref githubAccessToken
+          GITHUB_REPO_NAME: !Ref githubRepoName
+          LINE_BOT_CHANNEL_ACCESS_TOKEN: !Ref lineBotChannelAccessToken
+          LINE_BOT_CHANNEL_SECRET: !Ref lineBotChannelSecret
+          LINE_BOT_CHANNEL_ID: !Ref lineBotChannelID
+          # API: !Sub "https://${DrawMenuApi}.execute-api.${AWS::Region}.amazonaws.com/${stage}"
+      Events:
+        ReceivedLineMessage:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: !Ref DrawMenuApi
+            Path: /upload
+            Method: post
+
+  DeleteMenuFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: src/deleteMenu/
+      Handler: api.lambda_handler
+      Layers:
+        - !Ref FunctionLayer
+      Environment:
+        Variables:
+          STAGE: !Ref stage
+          GITHUB_USER: !Ref githubUser
+          GITHUB_ACCESS_TOKEN: !Ref githubAccessToken
+          GITHUB_REPO_NAME: !Ref githubRepoName
+          LINE_BOT_CHANNEL_ACCESS_TOKEN: !Ref lineBotChannelAccessToken
+          LINE_BOT_CHANNEL_SECRET: !Ref lineBotChannelSecret
+          LINE_BOT_CHANNEL_ID: !Ref lineBotChannelID
+          # API: !Sub "https://${DrawMenuApi}.execute-api.${AWS::Region}.amazonaws.com/${stage}"
+      Events:
+        ReceivedLineMessage:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: !Ref DrawMenuApi
+            Path: /delete
+            Method: delete
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  DrawMenuApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${DrawMenuApi}.execute-api.${AWS::Region}.amazonaws.com/${stage}"

@@ -247,6 +247,6 @@ $RECYCLE.BIN/
 .aws*
 
 # skip menu image change detact
-drawMenu/
+
 samconfig.toml
 /.vscode

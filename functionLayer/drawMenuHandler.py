@@ -3,6 +3,7 @@ import os
 from urllib.parse import quote
 import requests
 from linebot import LineBotApi, WebhookHandler
+from linebot.models import TextSendMessage, QuickReply, QuickReplyButton, URIAction, TemplateSendMessage, CarouselTemplate, CarouselColumn
 from os import getenv
 import random
 
@@ -10,12 +11,12 @@ import githubImageHandler
 
 
 # Linebot Setting
-line_bot_api = LineBotApi(getenv('LINE_BOT_CHANNEL_ACCESS_TOKEN'))
-handler = WebhookHandler(getenv('LINE_BOT_CHANNEL_SECRET'))
-my_line_id = getenv('LINE_BOT_CHANNEL_ID')
+line_bot_api = LineBotApi(getenv("LINE_BOT_CHANNEL_ACCESS_TOKEN"))
+handler = WebhookHandler(getenv("LINE_BOT_CHANNEL_SECRET"))
+my_line_id = getenv("LINE_BOT_CHANNEL_ID")
 HEADER = {
-    'Content-type': 'application/json',
-    'Authorization': f'Bearer {getenv("LINE_BOT_CHANNEL_ACCESS_TOKEN")}'
+    "Content-type": "application/json",
+    "Authorization": f'Bearer {getenv("LINE_BOT_CHANNEL_ACCESS_TOKEN")}'
 }
 
 class randomImage:
@@ -41,32 +42,78 @@ def random_get_menu_file(category: str=""):
     # menuRandomPool = os.listdir(os.path.join("drawMenu", "menus", category))
     menuRandomPool = githubImageHandler.get_menu_list(category)
 
-    return category, randomImage(menuRandomPool).get()
+    return randomImage(menuRandomPool).get()
 
-def draw_menu(event:dict):
-    if event["message"]["type"] == "text":
-        text = event["message"]["text"]
+def draw_menu(category: str=""):
+    if category == "早":
+        menuFile =  random_get_menu_file(category="breakfast")
+    
+    elif category == "晚":
+        menuFile =  random_get_menu_file(category="dinner")
+    
+    else:
+        menuFile =  random_get_menu_file()
+    
+    # restaurantName = os.path.basename(menuFile).split(".")[0]
+    restaurantName = menuFile[0].split(".")[0]
+
+    return {
+        "menuFile": menuFile[1],
+        "restaurantName": restaurantName
+    }
+
+def handle_message(payload: dict, requestContext: dict):
+    if payload["message"]["type"] == "text":
+        text = payload["message"]["text"]
         if "吃甚麼" in text or "吃什麼" in text:
             if "早" in text:
-                category, menuFile =  random_get_menu_file(category="breakfast")
-            
+                drawResult = draw_menu(category="早")
             elif "晚" in text:
-                category, menuFile =  random_get_menu_file(category="dinner")
-            
+                drawResult = draw_menu(category="晚")
             else:
-                category, menuFile =  random_get_menu_file()
+                drawResult = draw_menu()
+            menuFile = drawResult["menuFile"]
+            restaurantName = drawResult["restaurantName"]
+
+            return TemplateSendMessage(
+                alt_text="吃的推薦",
+                template=CarouselTemplate(
+                    columns=[
+                        CarouselColumn(
+                            thumbnail_image_url=menuFile,
+                            title="結果...",
+                            text=f"吃 {restaurantName}",
+                            actions=[
+                                URIAction(
+                                    label="看菜單",
+                                    uri=menuFile
+                                )
+                            ]
+                        )
+                    ]
+                )
+            )
+
+        elif "菜單" in text:
+            domainName = requestContext.get("domainName")
+            stage = requestContext.get("stage")
+            url = f"https://{domainName}/{stage}"
+
+            return TextSendMessage(
+                text="請點選以下按鈕來開啟連結：",
+                quick_reply=QuickReply(
+                    items=[
+                        QuickReplyButton(
+                            action=URIAction(
+                                label="上傳菜單按這裡",
+                                uri=url
+                            )
+                        )
+                    ]
+                )
+            )
+
             
-            # restaurantName = os.path.basename(menuFile).split(".")[0]
-            restaurantName = menuFile[0].split(".")[0]
 
-            return {
-                "category": category,
-                "menuFile": menuFile[1],
-                "restaurantName": restaurantName
-            }
-
-def sendMessage(payload):
-    response = requests.post(url="https://api.line.me/v2/bot/message/reply", headers=HEADER, json=payload)
-    # print(response.status_code)
-    # print(response.content)
-    return ""
+def reply_message(replyToken, message):
+    line_bot_api.reply_message(replyToken, message)

@@ -14,26 +14,8 @@ def lambda_handler(event: dict, context: dict):
 
         if replyToken := payload["events"][0]["replyToken"]:
             if payload["events"][0]["type"] == "message":
-                drawResult = drawMenuHandler.draw_menu(payload["events"][0])
-                menuCategory = drawResult["category"]
-                menuFile = drawResult["menuFile"]
-                restaurantName = drawResult["restaurantName"]
-
-                messagePayload = {
-                    "replyToken": replyToken,
-                    "messages": [
-                        {
-                            "type": "image",
-                            "originalContentUrl": menuFile,
-                            "previewImageUrl": menuFile
-                        },
-                        {
-                            "type": "text",
-                            "text": f"吃 {restaurantName}"
-                        }
-                    ]
-                }
-                drawMenuHandler.sendMessage(payload=messagePayload)
+                messagePayload = drawMenuHandler.handle_message(payload["events"][0], event.get("requestContext"))
+                drawMenuHandler.reply_message(replyToken, messagePayload)
                 # print(messagePayload)
     
     return response("application/json", 200, json.dumps({"message": "OK"}))

@@ -23,13 +23,13 @@ def lambda_handler(event: dict, context: dict):
                     "replyToken": replyToken,
                     "messages": [
                         {
-                            "type": "text",
-                            "text": f"吃 {restaurantName}"
-                        },
-                        {
                             "type": "image",
                             "originalContentUrl": menuFile,
                             "previewImageUrl": menuFile
+                        },
+                        {
+                            "type": "text",
+                            "text": f"吃 {restaurantName}"
                         }
                     ]
                 }

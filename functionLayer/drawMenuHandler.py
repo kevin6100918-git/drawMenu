@@ -76,7 +76,7 @@ def handle_message(payload: dict, requestContext: dict):
             restaurantName = drawResult["restaurantName"]
 
             return TemplateSendMessage(
-                alt_text="吃的推薦",
+                alt_text=f"吃 {restaurantName}",
                 template=CarouselTemplate(
                     columns=[
                         CarouselColumn(

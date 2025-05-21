@@ -296,34 +296,79 @@ basicScript = '''
                 return;
             }
 
+            if (!menuFile.type.startsWith('image/')) {
+                console.log("不是圖片格式");
+                return;
+            }
+
             showUploadingModal(); // 顯示上傳中彈窗
 
             const reader = new FileReader();
-            reader.readAsDataURL(menuFile);
+            reader.readAsArrayBuffer(menuFile);
             reader.onload = function(event) {
-                const fileData = event.target.result;
+                // 壓縮圖片
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                let blob = new Blob([event.target.result]);
+                let blobURL = URL.createObjectURL(blob);
+                img.src = blobURL;
+                img.onload = function() {
+                    const MAX_WIDTH = 1080;
+                    const MAX_HEIGHT = 2400;
+                    let width = img.width;
+                    let height = img.height;
 
-                const webUrl = window.location.href + '/upload';
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
 
-                fetch(webUrl, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        category: menuType,
-                        name: menuName,
-                        fileName: menuFile.name,
-                        fileData: fileData
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const fileData = canvas.toDataURL(menuFile.type)  // 取得 base64 編碼的圖片數據
+
+                    const webUrl = window.location.href + '/upload';
+
+                    fetch(webUrl, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            category: menuType,
+                            name: menuName,
+                            fileName: menuFile.name,
+                            fileData: fileData
+                        })
                     })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    alert('上傳成功');
-                    closeModal();
-                    location.reload();
-                })
-                .catch(error => {
-                    console.error('上傳失敗:', error);
-                    alert('上傳失敗，請重試');
-                });
+                    .then(response => {
+                        if (!response.ok) {
+                            // 自行根據 HTTP 狀態碼處理錯誤
+                            if (response.status === 413) {
+                                alert('圖片太大，請嘗試壓縮後再上傳');
+                            } else {
+                                alert(`上傳失敗，伺服器回傳錯誤碼 ${response.status}`);
+                            }
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        alert('上傳成功');
+                        closeModal();
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error('上傳失敗:', error);
+                        alert('上傳失敗，請重試');
+                    });
+                };
             }
         }
 

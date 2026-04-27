@@ -42,6 +42,48 @@ paths:
         ],
       }
 
+  /list/{category}:
+    get:
+      summary: list
+      tags:
+        - menu
+      operationId: list
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                type: object
+
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: post
+        uri:
+          Fn::Sub:
+            - 'arn:aws:apigateway:${AWSRegion}:lambda:path/2015-03-31/functions/${FunctionArn}/invocations'
+            - AWSRegion:
+                Ref: AWS::Region
+              FunctionArn:
+                Fn::GetAtt: [GetWebPageFunction, Arn]
+
+      x-amazon-apigateway-cors: {
+        allowOrigins: [
+          '*' 
+        ],
+        allowCredentials: true,
+        allowMethods: [
+          "OPTIONS",
+          "GET"
+        ],
+      }
+
   /draw:
     post:
       summary: draw

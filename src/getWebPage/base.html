@@ -3,186 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>菜單管理</title>
+    <title>菜單管理系統</title>
     <style>
-        /* 主要的網頁樣式 */
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
-            color: #4a2c2a;
-            background-color: #fff9f5;
+            color: #333;
+            background-color: #f8f9fa;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 0;
+            margin: 0;
         }
-        h1 {
-            font-size: 2em;
-            margin-bottom: 20px;
-            color: #8b5a4b;
+        header {
+            background: white;
+            width: 100%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px 0;
             text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        #menuCategory {
-            font-size: 18px;
-            padding: 10px 15px;
+        h1 { color: #d99873; margin: 0 0 15px 0; }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
             margin-bottom: 20px;
-            border-radius: 5px;
-            border: 1px solid #d9b7a3;
-            background-color: #ffe8d6;
-            color: #5a3e3b;
-            cursor: pointer;
         }
+        .tab {
+            padding: 10px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            background: #eee;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+        .tab.active {
+            background: #d99873;
+            color: white;
+        }
+
         button {
-            font-size: 18px;
+            font-size: 16px;
             padding: 10px 20px;
-            border-radius: 5px;
+            border-radius: 25px;
             border: none;
             background-color: #d99873;
             color: #fff;
             cursor: pointer;
-            margin-bottom: 20px;
-            transition: background-color 0.3s;
+            transition: 0.3s;
         }
-        button:hover {
-            background-color: #c6855a;
-        }
-
-        .restaurant {
-            position: relative;
-            border-radius: 10px;
-            width: 200px; /* 固定寬度 */
-            height: 250px; /* 固定高度 */
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s, box-shadow 0.3s;
-            background-color: #fdf3e8;
-            color: #4a2c2a;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end; /* 將內容放在底部 */
-        }
-
-        .restaurant img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* 自動填充圖片，符合高度或寬度 */
-            object-position: center; /* 圖片居中顯示 */
-            border-radius: 10px 10px 0 0;
-        }
-
-        .restaurant-name {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            padding: 10px;
-            font-size: 1em;
-            font-weight: bold;
-            color: #fff;
-            text-align: center;
-            background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
-            border-radius: 0 0 10px 10px; /* 底部圓角 */
-            z-index: 1;
-        }
+        button:hover { background-color: #c6855a; }
 
         .menu-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 20px;
-            max-width: 100%;
-        }
-
-        /* 上傳彈窗樣式 */
-        #uploadModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background-color: #ffe8d6;
+            gap: 25px;
+            max-width: 1200px;
             padding: 20px;
-            width: 300px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            color: #5a3e3b;
-        }
-        .modal-content input,
-        .modal-content select,
-        .modal-content button {
-            margin: 10px 0;
-            padding: 10px;
-            width: 100%;
-            font-size: 16px;
-        }
-        .modal-content input,
-        .modal-content select {
-            width: 75%;
-        }
-        .modal-content button {
-            background-color: #d99873;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        .modal-content button:hover {
-            background-color: #c6855a;
-        }
-        .close-btn {
-            background-color: #c74b35;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            float: right;
         }
 
-        /* 上傳中動畫的樣式 */
-        #uploadingModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            align-items: center;
-            justify-content: center;
-            z-index: 101;
+        .restaurant {
+            background: white;
+            position: relative;
+            border-radius: 15px;
+            width: 200px;
+            height: 280px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .restaurant:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
         }
         
-        .uploading-content {
-            background-color: #fff;
-            padding: 20px;
-            width: 200px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            font-size: 18px;
+        .restaurant.removing {
+            transform: scale(0.5);
+            opacity: 0;
+        }
+
+        .restaurant img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .restaurant-name {
+            position: absolute;
+            bottom: 0;
+            width: calc(100% - 20px);
+            padding: 10px;
+            font-size: 1em;
             font-weight: bold;
-            color: #333;
+            color: #fff;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1;
         }
 
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 10px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        #loading {
+            padding: 50px;
+            font-size: 1.2em;
+            color: #999;
+            display: none;
         }
 
         /* 刪除功能選單樣式 */
@@ -193,151 +122,203 @@
             cursor: pointer;
             background-color: rgba(255, 235, 230, 0.8);
             border-radius: 50%;
-            padding: 5px;
-            transition: background-color 0.3s;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            transition: 0.3s;
         }
-        .menu-icon:hover {
-            background-color: #ff7961;
-        }
+        .menu-icon:hover { background-color: #ff7961; color: white; }
+
         .delete-option {
             display: none;
             position: absolute;
-            top: 40px;
+            top: 45px;
             right: 10px;
-            background-color: #fff;
+            background: white;
             border: 1px solid #d99873;
-            padding: 5px 10px;
+            padding: 5px 15px;
             border-radius: 5px;
             cursor: pointer;
-            color: #8b5a4b;
             z-index: 10;
-        }
-        .delete-option:hover {
-            background-color: #ffe8d6;
-            color: #c74b35;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* 手機顯示樣式 */
-        @media (max-width: 768px) {
-            .restaurant {
-                width: 45%; /* 調整寬度以便手機顯示兩張菜單 */
-                height: auto; /* 高度自適應 */
-            }
+        /* 彈窗樣式省略，保持原本邏輯 */
+        #uploadModal, #uploadingModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            width: 320px;
+            border-radius: 15px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <h1>餐廳菜單管理系統</h1>
-    <select id="menuCategory" onchange="redirectBasedOnSelection()">
-        <option value="breakfast">早餐</option>
-        <option value="dinner">晚餐</option>
-    </select>
-    <button onclick="openModal()">上傳新菜單</button>
+    <header>
+        <h1>🍴 菜單管理系統</h1>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('breakfast', this)">早午餐</div>
+            <div class="tab" onclick="switchTab('dinner', this)">晚餐</div>
+        </div>
+        <button onclick="openModal()">＋ 上傳新菜單</button>
+    </header>
 
-    <div class="menu-container" id="menuContainer">
-        <!-- 餐廳菜單圖片將顯示在這裡 -->
-    </div>
+    <div id="loading">載入中...</div>
+    <div class="menu-container" id="menuContainer"></div>
 
     <!-- 上傳彈窗 -->
     <div id="uploadModal">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeModal()">×</button>
             <h2>上傳新菜單</h2>
-            <input type="text" id="menuName" placeholder="菜單名稱">
-            <input type="file" id="menuFile">
-            <select id="menuType">
-                <option value="breakfast">早餐</option>
+            <input type="text" id="menuName" placeholder="菜單名稱" style="width:90%; padding:10px; margin:10px 0;">
+            <input type="file" id="menuFile" style="margin:10px 0;">
+            <select id="menuType" style="width:90%; padding:10px; margin:10px 0;">
+                <option value="breakfast">早午餐</option>
                 <option value="dinner">晚餐</option>
             </select>
-            <button onclick="uploadMenu()">提交</button>
-        </div>
-    </div>
-
-    <!-- 上傳中彈窗 -->
-    <div id="uploadingModal">
-        <div class="uploading-content">
-            <div class="loader"></div>
-            上傳中...
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button onclick="uploadMenu()" style="flex:1">提交</button>
+                <button onclick="closeModal()" style="flex:1; background:#999;">取消</button>
+            </div>
         </div>
     </div>
 
     <script>
-        function redirectBasedOnSelection() {
-            const category = document.getElementById('menuCategory').value;
-            if (category) {
-                loadMenuImages();
+        let currentCategory = 'breakfast';
+
+        // 切換分類
+        function switchTab(category, element) {
+            currentCategory = category;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            loadMenuImages();
+        }
+
+        // 控制刪除選單顯示
+        function toggleDeleteMenu(event, element) {
+            event.stopPropagation();
+            const menu = element.nextElementSibling;
+            const isVisible = menu.style.display === 'block';
+            
+            // 先隱藏所有其他的刪除選單
+            document.querySelectorAll('.delete-option').forEach(el => el.style.display = 'none');
+            
+            menu.style.display = isVisible ? 'none' : 'block';
+        }
+
+        // 執行刪除 (改進版：原地動畫移除)
+        async function deleteMenu(event, name, cardElement) {
+            event.stopPropagation();
+            if (!confirm(`確定要刪除「${name}」嗎？`)) return;
+
+            try {
+                // 視覺回饋：變透明表示處理中
+                cardElement.style.opacity = '0.5';
+                cardElement.style.pointerEvents = 'none';
+
+                const res = await fetch(`${window.location.origin}${window.location.pathname}/delete`, {
+                    method: 'DELETE',
+                    body: JSON.stringify({
+                        category: currentCategory,
+                        name: name
+                    })
+                });
+
+                if (res.ok) {
+                    // 動畫移除
+                    cardElement.classList.add('removing');
+                    setTimeout(() => cardElement.remove(), 300);
+                } else {
+                    throw new Error('刪除失敗');
+                }
+            } catch (e) {
+                cardElement.style.opacity = '1';
+                cardElement.style.pointerEvents = 'auto';
+                alert('刪除失敗');
             }
         }
 
-        function openModal() {
-            document.getElementById('uploadModal').style.display = 'flex';
+        // 點擊頁面其他地方時隱藏刪除選單
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.delete-option').forEach(el => el.style.display = 'none');
+        });
+
+        // 載入資料
+        async function loadMenuImages() {
+            const container = document.getElementById('menuContainer');
+            const loading = document.getElementById('loading');
+            container.innerHTML = "";
+            loading.style.display = "block";
+
+            try {
+                const response = await fetch(`${window.location.origin}${window.location.pathname}/list/${currentCategory}`);
+                const data = await response.json();
+                loading.style.display = "none";
+
+                // 測試用的模擬資料
+                // const data = [
+                //     { name: "金禾鐵板燒", image: "https://picsum.photos/seed/food1/400/600" },
+                //     { name: "極度飯桶", image: "https://picsum.photos/seed/food2/400/600" },
+                //     { name: "好食早午餐", image: "https://picsum.photos/seed/food3/400/600" },
+                //     { name: "巷弄私廚", image: "https://picsum.photos/seed/food4/400/600" },
+                //     { name: "大胃王快餐", image: "https://picsum.photos/seed/food5/400/600" },
+                //     { name: "健康輕食館", image: "https://picsum.photos/seed/food6/400/600" }
+                // ];
+
+                data.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'restaurant';
+                    
+                    // 分離點擊邏輯：點圖片開啟，點選單控制刪除
+                    div.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" onclick="window.open('${item.image}', '_blank')">
+                        <div class="menu-icon" onclick="toggleDeleteMenu(event, this)">⋮</div>
+                        <div class="delete-option" id="del-${item.name}">刪除</div>
+                        <div class="restaurant-name">${item.name}</div>
+                    `;
+                    
+                    // 綁定刪除事件並傳入當前元素
+                    div.querySelector('.delete-option').onclick = (e) => deleteMenu(e, item.name, div);
+
+                    container.appendChild(div);
+                });
+            } catch (e) {
+                loading.textContent = "目前沒有資料或載入失敗";
+            }
         }
 
-        function closeModal() {
-            document.getElementById('uploadModal').style.display = 'none';
-        }
-
-        function showUploadingModal() {
-            document.getElementById('uploadingModal').style.display = 'flex';
-        }
-
-        function hideUploadingModal() {
-            document.getElementById('uploadingModal').style.display = 'none';
-        }
+        function openModal() { document.getElementById('uploadModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('uploadModal').style.display = 'none'; }
 
         function uploadMenu() {
             const menuName = document.getElementById('menuName').value;
             const menuFile = document.getElementById('menuFile').files[0];
             const menuType = document.getElementById('menuType').value;
 
-            if (!menuName || !menuFile || !menuType) {
-                alert('請填寫所有欄位');
+            if (!menuName || !menuFile) {
+                alert('請填寫完整資訊');
                 return;
             }
-
-            if (!menuFile.type.startsWith('image/')) {
-                console.log("不是圖片格式");
-                return;
-            }
-
-            showUploadingModal(); // 顯示上傳中彈窗
 
             const reader = new FileReader();
-            reader.readAsArrayBuffer(menuFile);
-            reader.onload = function(event) {
-                // 壓縮圖片
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                const img = new Image();
-                let blob = new Blob([event.target.result]);
-                let blobURL = URL.createObjectURL(blob);
-                img.src = blobURL;
-                img.onload = function() {
-                    const MAX_WIDTH = 1080;
-                    const MAX_HEIGHT = 2400;
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > height) {
-                        if (width > MAX_WIDTH) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
-                        }
-                    } else {
-                        if (height > MAX_HEIGHT) {
-                            width *= MAX_HEIGHT / height;
-                            height = MAX_HEIGHT;
-                        }
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    ctx.drawImage(img, 0, 0, width, height);
-                    const fileData = canvas.toDataURL(menuFile.type)  // 取得 base64 編碼的圖片數據
-
-                    const webUrl = window.location.href + '/upload';
-
-                    fetch(webUrl, {
+            reader.readAsDataURL(menuFile);
+            reader.onload = async function() {
+                const fileData = reader.result; // Base64
+                
+                try {
+                    const res = await fetch(`${window.location.origin}${window.location.pathname}/upload`, {
                         method: 'POST',
                         body: JSON.stringify({
                             category: menuType,
@@ -345,128 +326,18 @@
                             fileName: menuFile.name,
                             fileData: fileData
                         })
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            // 自行根據 HTTP 狀態碼處理錯誤
-                            if (response.status === 413) {
-                                alert('圖片太大，請嘗試壓縮後再上傳');
-                            } else {
-                                alert(`上傳失敗，伺服器回傳錯誤碼 ${response.status}`);
-                            }
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        alert('上傳成功');
-                        closeModal();
-                        location.reload();
-                    })
-                    .catch(error => {
-                        console.error('上傳失敗:', error);
-                        alert('上傳失敗，請重試');
                     });
-                };
-            }
-        }
-
-        function deleteMenu(menuType, menuName) {
-            const confirmDelete = confirm(`確定要刪除 ${menuName} 嗎？`);
-            if (!confirmDelete) return;
-
-            const webUrl = window.location.href + '/delete';
-
-            fetch(webUrl, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ category: menuType, name: menuName })
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(`${menuName} 已成功刪除`);
-                location.reload();
-            })
-            .catch(error => {
-                console.error('刪除失敗:', error);
-                alert('刪除失敗，請重試');
-            });
-        }
-
-        function loadMenuImages() {
-            const category = document.getElementById('menuCategory').value;
-            const menuContainer = document.getElementById('menuContainer');
-            menuContainer.innerHTML = "";
-
-            const restaurantData = {
-                breakfast: [
-                    { name: "餐廳 A", image: "C:/Users/kevin/Downloads/和林鐵板燒.jpg" },
-                    { name: "餐廳 B", image: "C:/Users/kevin/Downloads/極度飯桶.jpg" },
-                    { name: "餐廳 A", image: "C:/Users/kevin/Downloads/和林鐵板燒.jpg" },
-                    { name: "餐廳 B", image: "C:/Users/kevin/Downloads/極度飯桶.jpg" },
-                    { name: "餐廳 A", image: "C:/Users/kevin/Downloads/和林鐵板燒.jpg" },
-                    { name: "餐廳 B", image: "C:/Users/kevin/Downloads/極度飯桶.jpg" },
-                    { name: "餐廳 A", image: "C:/Users/kevin/Downloads/和林鐵板燒.jpg" },
-                    { name: "餐廳 B", image: "C:/Users/kevin/Downloads/極度飯桶.jpg" },
-                    { name: "餐廳 A", image: "C:/Users/kevin/Downloads/和林鐵板燒.jpg" },
-                    { name: "餐廳 B", image: "C:/Users/kevin/Downloads/極度飯桶.jpg" },
-                ],
-                dinner: [
-                    { name: "餐廳 C", image: "C:/Users/kevin/Downloads/和林鐵板燒.jpg" },
-                    { name: "餐廳 D", image: "C:/Users/kevin/Downloads/極度飯桶.jpg" },
-                    { name: "餐廳 C", image: "C:/Users/kevin/Downloads/和林鐵板燒.jpg" },
-                    { name: "餐廳 D", image: "C:/Users/kevin/Downloads/極度飯桶.jpg" },
-                    { name: "餐廳 C", image: "C:/Users/kevin/Downloads/和林鐵板燒.jpg" },
-                    { name: "餐廳 D", image: "C:/Users/kevin/Downloads/極度飯桶.jpg" },
-                    { name: "餐廳 C", image: "C:/Users/kevin/Downloads/和林鐵板燒.jpg" },
-                    { name: "餐廳 D", image: "C:/Users/kevin/Downloads/極度飯桶.jpg" },
-                    { name: "餐廳 C", image: "C:/Users/kevin/Downloads/和林鐵板燒.jpg" },
-                    { name: "餐廳 D", image: "C:/Users/kevin/Downloads/極度飯桶.jpg" },
-                ]
+                    if(res.ok) {
+                        alert('上傳成功');
+                        location.reload();
+                    }
+                } catch (e) {
+                    alert('上傳失敗');
+                }
             };
-
-        if (restaurantData[category]) {
-            restaurantData[category].forEach(restaurant => {
-                const restaurantDiv = document.createElement('div');
-                restaurantDiv.className = 'restaurant';
-
-                const img = document.createElement('img');
-                img.src = restaurant.image;
-                img.alt = restaurant.name;
-
-                const name = document.createElement('a');
-                name.className = 'restaurant-name';
-                name.textContent = restaurant.name;
-                name.href = restaurant.image;
-
-                // 刪除圖示和選項
-                const iconDiv = document.createElement('div');
-                iconDiv.className = 'menu-icon';
-                iconDiv.innerHTML = '⋮';
-                iconDiv.onclick = () => {
-                    deleteOption.style.display = deleteOption.style.display === 'block' ? 'none' : 'block';
-                    console.log(deleteOption.style.display)
-                };
-
-                const deleteOption = document.createElement('div');
-                deleteOption.className = 'delete-option';
-                deleteOption.textContent = '刪除';
-                deleteOption.onclick = () => {
-                    deleteMenu(category, restaurant.name);
-                };
-
-                restaurantDiv.appendChild(img);
-                restaurantDiv.appendChild(iconDiv);
-                restaurantDiv.appendChild(deleteOption);
-                restaurantDiv.appendChild(name);
-                menuContainer.appendChild(restaurantDiv);
-            });
         }
-    }
 
-    window.onload = loadMenuImages;
+        window.onload = loadMenuImages;
     </script>
 </body>
 </html>

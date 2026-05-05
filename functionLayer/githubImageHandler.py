@@ -39,14 +39,28 @@ def get_menu_list(meal: str) -> list[tuple[str, str]]:
 
 
 def upload_menu(meal: str, menuName: str, imageData: bytes) -> int:
+    path = f"drawMenu/menus/{meal}/{menuName}"
     try:
-        gitHubRepo.create_file(path=f"drawMenu/menus/{meal}/{menuName}", message=f"upload menu {menuName}", content=imageData)
-    
+        # 嘗試獲取現有檔案以取得 sha 值
+        contents = gitHubRepo.get_contents(path)
+        # 如果檔案存在，執行更新 (覆蓋)
+        gitHubRepo.update_file(
+            path=path,
+            message=f"overwrite menu {menuName}",
+            content=imageData,
+            sha=contents.sha
+        )
     except GithubException as err:
-        print(err)
+        if err.status == 404:
+            # 檔案不存在，執行新建
+            gitHubRepo.create_file(path=path, message=f"upload menu {menuName}", content=imageData)
+        else:
+            print(f"GitHub Error: {err}")
+            return err.status
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return 500
 
-        return err.status
-    
     return 200
 
 def delete_menu(meal: str, menuName: str) -> None:
@@ -59,4 +73,3 @@ def delete_menu(meal: str, menuName: str) -> None:
 
         return err.status
     return 200
-
